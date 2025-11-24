@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFoodz.pk - Pakistan's Premier Food Delivery Service</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* All previous CSS remains, adding new styles below */
+
+        /* Back to top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            opacity: 0;
+            visibility: hidden;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-5px);
+        }
+
+        /* Featured restaurants section */
+        .featured-restaurants {
+            padding: 4rem 0;
+            background: linear-gradient(to bottom, var(--light) 50%, var(--white) 50%);
+        }
+
+        .featured-cards {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            padding: 1rem 0.5rem;
+            scrollbar-width: thin;
+            scrollbar-color: var(--primary) var(--gray-light);
+        }
+
+        .featured-cards::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .featured-cards::-webkit-scrollbar-track {
+            background: var(--gray-light);
+            border-radius: 10px;
+        }
+
+        .featured-cards::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .featured-card {
+            min-width: 300px;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+        }
+
+        .featured-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--primary);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        /* Promotional banner */
+        .promo-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            margin: 3rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .promo-content {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .promo-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .promo-code {
+            background: var(--white);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .promo-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+            font-size: 8rem;
+        }
+
+        /* How it works section */
+        .how-it-works {
+            padding: 4rem 0;
+            background: var(--white);
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+            border-radius: var(--radius-md);
+            background: var(--light);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .step-number {
+            background: var(--primary);
+            color: var(--white);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-weight: bold;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            visibility: hidden;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .loading-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .spinner {
+            width: 70px;
+            height: 70px;
+            border: 5px solid var(--gray-light);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Improved search suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            margin-top: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+        }
+
+        .search-suggestions.visible {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .suggestion-item:hover {
+            background: var(--light);
+        }
+
+        .suggestion-icon {
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* Improved responsive styles */
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .btn {
+                padding: 0.6rem 1.2rem;
+                font-size: 0.9rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .promo-banner {
+                text-align: center;
+            }
+            
+            .promo-image {
+                font-size: 5rem;
+            }
+        }
+
+        /* Animation for items added to cart */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (unchanged) -->
+    <header class="header">
+        <!-- ... existing header code ... -->
+    </header>
+
+    <!-- Mobile Menu (unchanged) -->
+    <div class="mobile-menu" id="mobileMenu">
+        <!-- ... existing mobile menu code ... -->
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container hero-content">
+                <h1>Delicious Food, Delivered Fast</h1>
+                <p>Order from Pakistan's best restaurants and get fresh food delivered to your doorstep</p>
+                <div class="search-container">
+                    <input type="text" class="search-box" placeholder="Search for restaurants or dishes..." id="searchInput" oninput="showSuggestions()">
+                    <button class="search-btn" onclick="searchFood()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <div class="search-suggestions" id="searchSuggestions">
+                        <!-- Suggestions will appear here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Location Section -->
+        <section class="location-section">
+            <div class="container location-content">
+                <div class="location-selector">
+                    <span><i class="fas fa-map-marker-alt"></i></span>
+                    <select id="locationSelect" onchange="updateLocation()">
+                        <option value="">Select your city</option>
+                        <option value="karachi">Karachi</option>
+                        <option value="lahore">Lahore</option>
+                        <option value="islamabad">Islamabad</option>
+                        <option value="rawalpindi">Rawalpindi</option>
+                        <option value="faisalabad">Faisalabad</option>
+                        <option value="multan">Multan</option>
+                    </select>
+                    <span>for accurate delivery information</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Restaurants Section (New) -->
+        <section class="featured-restaurants">
+            <div class="container">
+                <h2 class="section-title">Featured Restaurants</h2>
+                <div class="featured-cards" id="featuredRestaurants">
+                    <!-- Featured restaurants will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Promotional Banner (New) -->
+        <section class="container">
+            <div class="promo-banner">
+                <div class="promo-content">
+                    <h2>Get 25% Off Your First Order!</h2>
+                    <p>Use code below to get discount on your first order. Tasty food is just a click away!</p>
+                    <div class="promo-code">NFoodz25</div>
+                </div>
+                <div class="promo-image">
+                    🍕
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories -->
+        <section class="categories" id="categories">
+            <div class="container">
+                <h2 class="section-title">Food Categories</h2>
+                <div class="categories-grid">
+                    <!-- ... existing category cards ... -->
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section (New) -->
+        <section class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">📍</div>
+                        <h3>Choose Location</h3>
+                        <p>Enter your address or use your current location to find restaurants near you.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">🍔</div>
+                        <h3>Select Food</h3>
+                        <p>Browse hundreds of dishes from local restaurants and add to your cart.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">💳</div>
+                        <h3>Make Payment</h3>
+                        <p>Pay online using your credit card or with cash when your food arrives.</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">🚚</div>
+                        <h3>Fast Delivery</h3>
+                        <p>Get your food delivered fresh and hot right to your doorstep.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Restaurants -->
+        <section class="restaurants" id="restaurants">
+            <div class="container">
+                <h2 class="section-title">Popular Restaurants</h2>
+                
+                <div class="filters">
+                    <div class="filter-options">
+                        <button class="filter-btn active" onclick="filterRestaurants('all')">
+                            <i class="fas fa-th"></i> All
+                        </button>
+                        <button class="filter-btn" onclick="filterRestaurants('fast-food')">
+                            <i class="fas fa-hamburger"></i> Fast Food
+                        </button>
+                        <button class="filter-btn" onclick="filterRestaurants('desi')">
+                            <i class="fas fa-utensils"></i> Desi
+                        </button>
+                        <button class="filter-btn" onclick="filterRestaurants('chinese')">
+                            <i class="fas fa-egg"></i> Chinese
+                        </button>
+                    </div>
+                    
+                    <select class="sort-select" onchange="sortRestaurants(this.value)">
+                        <option value="rating">Sort by Rating</option>
+                        <option value="delivery-time">Sort by Delivery Time</option>
+                        <option value="name">Sort by Name</option>
+                    </select>
+                </div>
+                
+                <div class="restaurants-grid" id="restaurantsGrid">
+                    <!-- Restaurants will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Restaurant Modal -->
+    <div class="modal" id="restaurantModal">
+        <!-- ... existing modal code ... -->
+    </div>
+
+    <!-- Cart Sidebar -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <!-- ... existing cart sidebar code ... -->
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <i class="fas fa-check-circle"></i>
+        <span id="toastMessage">Item added to cart</span>
+    </div>
+
+    <!-- Back to Top Button (New) -->
+    <div class="back-to-top" id="backToTop">
+        <i class="fas fa-arrow-up"></i>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <!-- ... existing footer code ... -->
+    </footer>
+
+    <script>
+        // Sample data for restaurants
+        const restaurants = [
+            {
+                id: 1,
+                name: "Biryani Express",
+                category: "desi",
+                rating: 4.7,
+                deliveryTime: "30-45 min",
+                image: "🍛",
+                featured: true,
+                items: [
+                    { id: 101, name: "Chicken Biryani", price: 350, image: "🍗" },
+                    { id: 102, name: "Beef Biryani", price: 400, image: "🐄" },
+                    { id: 103, name: "Vegetable Biryani", price: 250, image: "🥕" },
+                    { id: 104, name: "Chicken Karahi", price: 650, image: "🍲" }
+                ]
+            },
+            {
+                id: 2,
+                name: "Pizza Palace",
+                category: "fast-food",
+                rating: 4.5,
+                deliveryTime: "25-40 min",
+                image: "🍕",
+                featured: true,
+                items: [
+                    { id: 201, name: "Margherita Pizza", price: 800, image: "🍕" },
+                    { id: 202, name: "Pepperoni Pizza", price: 950, image: "🍕" },
+                    { id: 203, name: "BBQ Chicken Pizza", price: 1100, image: "🍕" },
+                    { id: 204, name: "Garlic Bread", price: 200, image: "🍞" }
+                ]
+            },
+            {
+                id: 3,
+                name: "Dragon Wok",
+                category: "chinese",
+                rating: 4.3,
+                deliveryTime: "35-50 min",
+                image: "🥡",
+                featured: false,
+                items: [
+                    { id: 301, name: "Chicken Fried Rice", price: 450, image: "🍚" },
+                    { id: 302, name: "Chow Mein", price: 400, image: "🍜" },
+                    { id: 303, name: "Sweet and Sour Chicken", price: 550, image: "🍗" },
+                    { id: 304, name: "Spring Rolls", price: 250, image: "🌯" }
+                ]
+            },
+            {
+                id: 4,
+                name: "Burger Hub",
+                category: "fast-food",
+                rating: 4.6,
+                deliveryTime: "20-35 min",
+                image: "🍔",
+                featured: true,
+                items: [
+                    { id: 401, name: "Classic Beef Burger", price: 350, image: "🍔" },
+                    { id: 402, name: "Chicken Burger", price: 300, image: "🍔" },
+                    { id: 403, name: "Zinger Burger", price: 400, image: "🍔" },
+                    { id: 404, name: "French Fries", price: 150, image: "🍟" }
+                ]
+            },
+            {
+                id: 5,
+                name: "Sweet Delights",
+                category: "desserts",
+                rating: 4.8,
+                deliveryTime: "25-40 min",
+                image: "🍰",
+                featured: false,
+                items: [
+                    { id: 501, name: "Chocolate Cake", price: 450, image: "🍫" },
+                    { id: 502, name: "Cheesecake", price: 500, image: "🍰" },
+                    { id: 503, name: "Ice Cream Sundae", price: 350, image: "🍨" },
+                    { id: 504, name: "Brownie", price: 200, image: "🍫" }
+                ]
+            },
+            {
+                id: 6,
+                name: "Healthy Bites",
+                category: "healthy",
+                rating: 4.4,
+                deliveryTime: "30-45 min",
+                image: "🥗",
+                featured: false,
+                items: [
+                    { id: 601, name: "Caesar Salad", price: 400, image: "🥗" },
+                    { id: 602, name: "Grilled Chicken", price: 500, image: "🍗" },
+                    { id: 603, name: "Fruit Bowl", price: 300, image: "🍎" },
+                    { id: 604, name: "Smoothie", price: 250, image: "🥤" }
+                ]
+            }
+        ];
+
+        // Sample search suggestions
+        const searchSuggestions = [
+            { type: "dish", name: "Biryani", icon: "🍛" },
+            { type: "dish", name: "Pizza", icon: "🍕" },
+            { type: "dish", name: "Burger", icon: "🍔" },
+            { type: "dish", name: "Karahi", icon: "🍲" },
+            { type: "restaurant", name: "Biryani Express", icon: "🏪" },
+            { type: "restaurant", name: "Pizza Palace", icon: "🏪" },
+            { type: "category", name: "Fast Food", icon: "🍔" },
+            { type: "category", name: "Desi Food", icon: "🍛" }
+        ];
+
+        // DOM elements
+        const restaurantsGrid = document.getElementById('restaurantsGrid');
+        const featuredRestaurants = document.getElementById('featuredRestaurants');
+        const restaurantModal = document.getElementById('restaurantModal');
+        const foodItemsContainer = document.getElementById('foodItemsContainer');
+        const cartSidebar = document.getElementById('cartSidebar');
+        const cartItemsContainer = document.getElementById('cartItemsContainer');
+        const cartCount = document.getElementById('cartCount');
+        const totalAmount = document.getElementById('totalAmount');
+        const toast = document.getElementById('toast');
+        const searchInput = document.getElementById('searchInput');
+        const searchSuggestionsContainer = document.getElementById('searchSuggestions');
+        const backToTop = document.getElementById('backToTop');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Cart state
+        let cart = [];
+        let currentRestaurant = null;
+
+        // Initialize the page
+        function init() {
+            renderRestaurants();
+            renderFeaturedRestaurants();
+            setupEventListeners();
+            
+            // Show loading overlay for 2 seconds on initial load
+            showLoading();
+            setTimeout(hideLoading, 2000);
+        }
+
+        // Render restaurants based on current filter
+        function renderRestaurants(filter = 'all') {
+            restaurantsGrid.innerHTML = '';
+            
+            const filteredRestaurants = filter === 'all' 
+                ? restaurants 
+                : restaurants.filter(r => r.category === filter);
+            
+            filteredRestaurants.forEach(restaurant => {
+                const restaurantCard = document.createElement('div');
+                restaurantCard.className = 'restaurant-card';
+                restaurantCard.innerHTML = `
+                    <div class="restaurant-image">
+                        ${restaurant.image}
+                        ${restaurant.featured ? '<div class="featured-badge">Featured</div>' : ''}
+                    </div>
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">${restaurant.name}</h3>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <span class="stars">⭐</span>
+                                <span>${restaurant.rating}</span>
+                            </div>
+                            <div class="delivery-time">🕐 ${restaurant.deliveryTime}</div>
+                        </div>
+                        <div class="restaurant-tags">
+                            <span class="tag">${getCategoryName(restaurant.category)}</span>
+                            <span class="tag">Free Delivery</span>
+                        </div>
+                    </div>
+                `;
+                
+                restaurantCard.addEventListener('click', () => openRestaurantModal(restaurant));
+                restaurantsGrid.appendChild(restaurantCard);
+            });
+        }
+
+        // Render featured restaurants
+        function renderFeaturedRestaurants() {
+            featuredRestaurants.innerHTML = '';
+            
+            const featured = restaurants.filter(r => r.featured);
+            
+            featured.forEach(restaurant => {
+                const featuredCard = document.createElement('div');
+                featuredCard.className = 'featured-card';
+                featuredCard.innerHTML = `
+                    <div class="restaurant-image">
+                        ${restaurant.image}
+                        <div class="featured-badge">Featured</div>
+                    </div>
+                    <div class="restaurant-info">
+                        <h3 class="restaurant-name">${restaurant.name}</h3>
+                        <div class="restaurant-meta">
+                            <div class="rating">
+                                <span class="stars">⭐</span>
+                                <span>${restaurant.rating}</span>
+                            </div>
+                            <div class="delivery-time">🕐 ${restaurant.deliveryTime}</div>
+                        </div>
+                        <div class="restaurant-tags">
+                            <span class="tag">${getCategoryName(restaurant.category)}</span>
+                        </div>
+                    </div>
+                `;
+                
+                featuredCard.addEventListener('click', () => openRestaurantModal(restaurant));
+                featuredRestaurants.appendChild(featuredCard);
+            });
+        }
+
+        // Get category display name
+        function getCategoryName(category) {
+            const categories = {
+                'fast-food': 'Fast Food',
+                'desi': 'Desi Food',
+                'chinese': 'Chinese',
+                'desserts': 'Desserts',
+                'beverages': 'Beverages',
+                'healthy': 'Healthy'
+            };
+            
+            return categories[category] || category;
+        }
+
+        // Open restaurant modal
+        function openRestaurantModal(restaurant) {
+            currentRestaurant = restaurant;
+            
+            document.getElementById('modalRestaurantName').textContent = restaurant.name;
+            document.getElementById('modalRestaurantRating').textContent = restaurant.rating;
+            document.getElementById('modalRestaurantTime').textContent = `🕐 ${restaurant.deliveryTime}`;
+            
+            // Render food items
+            foodItemsContainer.innerHTML = '';
+            restaurant.items.forEach(item => {
+                const foodItem = document.createElement('div');
+                foodItem.className = 'food-item';
+                foodItem.innerHTML = `
+                    <div class="food-image">${item.image}</div>
+                    <div class="food-details">
+                        <div class="food-name">${item.name}</div>
+                        <div class="food-price">Rs. ${item.price}</div>
+                    </div>
+                    <button class="add-to-cart" onclick="addToCart(${item.id})">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                `;
+                foodItemsContainer.appendChild(foodItem);
+            });
+            
+            restaurantModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close modal
+        function closeModal() {
+            restaurantModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Add item to cart
+        function addToCart(itemId) {
+            const restaurant = currentRestaurant;
+            const item = restaurant.items.find(i => i.id === itemId);
+            
+            // Check if item already in cart
+            const existingItem = cart.find(i => i.id === itemId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    image: item.image,
+                    restaurant: restaurant.name,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+            showToast('Item added to cart');
+            
+            // Add pulse animation to cart icon
+            cartCount.classList.add('pulse');
+            setTimeout(() => cartCount.classList.remove('pulse'), 500);
+        }
+
+        // Update cart UI
+        function updateCart() {
+            cartCount.textContent = cart.reduce((total, item) => total + item.quantity, 0);
+            
+            // Render cart items
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+            } else {
+                cart.forEach(item => {
+                    const cartItem = document.createElement('div');
+                    cartItem.className = 'cart-item';
+                    cartItem.innerHTML = `
+                        <div class="food-image">${item.image}</div>
+                        <div class="cart-item-details">
+                            <div class="food-name">${item.name}</div>
+                            <div class="food-price">Rs. ${item.price * item.quantity}</div>
+                            <div class="restaurant-name">${item.restaurant}</div>
+                        </div>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity - 1})">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn" onclick="updateQuantity(${item.id}, ${item.quantity + 1})">+</button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(cartItem);
+                });
+            }
+            
+            // Update total
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            totalAmount.textContent = `Rs. ${total}`;
+        }
+
+        // Update item quantity
+        function updateQuantity(itemId, newQuantity) {
+            if (newQuantity < 1) {
+                // Remove item from cart if quantity is 0
+                cart = cart.filter(item => item.id !== itemId);
+            } else {
+                const item = cart.find(i => i.id === itemId);
+                if (item) item.quantity = newQuantity;
+            }
+            
+            updateCart();
+        }
+
+        // Toggle cart sidebar
+        function toggleCart() {
+            cartSidebar.classList.toggle('open');
+            document.body.style.overflow = cartSidebar.classList.contains('open') ? 'hidden' : 'auto';
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toastMessage = document.getElementById('toastMessage');
+            toastMessage.textContent = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Filter restaurants by category
+        function filterRestaurants(category) {
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            renderRestaurants(category);
+        }
+
+        // Sort restaurants
+        function sortRestaurants(criteria) {
+            // Implementation for sorting would go here
+            showToast(`Sorted by ${criteria}`);
+        }
+
+        // Filter by category from category cards
+        function filterByCategory(category) {
+            filterRestaurants(category);
+            
+            // Scroll to restaurants section
+            document.getElementById('restaurants').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Search food function
+        function searchFood() {
+            const query = searchInput.value.trim();
+            if (query) {
+                showToast(`Searching for "${query}"`);
+                // Actual search implementation would go here
+            }
+        }
+
+        // Show search suggestions
+        function showSuggestions() {
+            const query = searchInput.value.toLowerCase();
+            
+            if (query.length < 2) {
+                searchSuggestionsContainer.classList.remove('visible');
+                return;
+            }
+            
+            const filteredSuggestions = searchSuggestions.filter(s => 
+                s.name.toLowerCase().includes(query)
+            );
+            
+            searchSuggestionsContainer.innerHTML = '';
+            
+            if (filteredSuggestions.length > 0) {
+                filteredSuggestions.forEach(suggestion => {
+                    const suggestionItem = document.createElement('div');
+                    suggestionItem.className = 'suggestion-item';
+                    suggestionItem.innerHTML = `
+                        <span class="suggestion-icon">${suggestion.icon}</span>
+                        <span>${suggestion.name}</span>
+                    `;
+                    suggestionItem.addEventListener('click', () => {
+                        searchInput.value = suggestion.name;
+                        searchSuggestionsContainer.classList.remove('visible');
+                        searchFood();
+                    });
+                    searchSuggestionsContainer.appendChild(suggestionItem);
+                });
+                
+                searchSuggestionsContainer.classList.add('visible');
+            } else {
+                searchSuggestionsContainer.classList.remove('visible');
+            }
+        }
+
+        // Update location
+        function updateLocation() {
+            const locationSelect = document.getElementById('locationSelect');
+            const location = locationSelect.value;
+            
+            if (location) {
+                showToast(`Location set to ${locationSelect.options[locationSelect.selectedIndex].text}`);
+            }
+        }
+
+        // Checkout function
+        function checkout() {
+            if (cart.length === 0) {
+                showToast('Your cart is empty');
+                return;
+            }
+            
+            showLoading();
+            
+            // Simulate checkout process
+            setTimeout(() => {
+                hideLoading();
+                showToast('Order placed successfully!');
+                cart = [];
+                updateCart();
+                toggleCart();
+            }, 2000);
+        }
+
+        // Show loading overlay
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+        // Hide loading overlay
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === restaurantModal) {
+                    closeModal();
+                }
+            });
+            
+            // Hide search suggestions when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchSuggestionsContainer.contains(e.target)) {
+                    searchSuggestionsContainer.classList.remove('visible');
+                }
+            });
+            
+            // Back to top button
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTop.classList.add('visible');
+                } else {
+                    backToTop.classList.remove('visible');
+                }
+            });
+            
+            backToTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                // ESC to close modal
+                if (e.key === 'Escape') {
+                    if (restaurantModal.style.display === 'block') {
+                        closeModal();
+                    }
+                    if (cartSidebar.classList.contains('open')) {
+                        toggleCart();
+                    }
+                }
+                
+                // / to focus search
+                if (e.key === '/' && document.activeElement !== searchInput) {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+            });
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : 'auto';
+        }
+
+        // Initialize the app
+        window.onload = init;
+    </script>
+</body>
+</html>

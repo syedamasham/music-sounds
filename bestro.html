@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Beastro - Custom Gaming PCs</title>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0c0c1b;
+      color: white;
+      overflow-x: hidden;
+      transition: all 0.5s ease;
+    }
+    body.day-mode {
+      background-color: #f8fafc;
+      color: #0c0c1b;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #4b5563;
+      position: relative;
+      z-index: 100;
+      background-color: rgba(12, 12, 27, 0.9);
+      position: sticky;
+      top: 0;
+      transition: all 0.5s ease;
+    }
+    body.day-mode header {
+      background-color: rgba(248, 250, 252, 0.9);
+      border-bottom: 1px solid #cbd5e1;
+    }
+    nav button {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      margin-right: 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    nav button:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: #06b6d4;
+      transition: width 0.3s ease;
+    }
+    nav button:hover {
+      color: #a78bfa;
+    }
+    nav button:hover:after {
+      width: 100%;
+    }
+    .hero {
+      text-align: center;
+      padding: 5rem 1rem;
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                  url('https://i.pinimg.com/736x/75/c3/85/75c385a0fbd28779433c0e92af7865b7.jpg');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      min-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+    }
+    .hero-content {
+      transform-style: preserve-3d;
+      animation: float 6s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotateY(0deg);
+      }
+      50% {
+        transform: translateY(-20px) rotateY(5deg);
+      }
+    }
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1.5rem;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      background: linear-gradient(to right, #06b6d4, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textGlow 2s ease-in-out infinite alternate;
+    }
+    @keyframes textGlow {
+      from {
+        text-shadow: 0 0 5px rgba(6, 182, 212, 0.5);
+      }
+      to {
+        text-shadow: 0 0 20px rgba(167, 139, 250, 0.8);
+      }
+    }
+    .hero button {
+      background-color: black;
+      color: white;
+      padding: 0.75rem 2rem;
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+      margin-top: 1.5rem;
+      border: none;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    .hero button:hover {
+      background-color: white;
+      color: black;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    .hero button:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+    .hero button:hover:before {
+      left: 100%;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 3rem 1.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    
+    .pc-card:nth-last-child(1):nth-child(odd),
+    .pc-card:nth-last-child(2):nth-child(even) {
+      grid-column: 1 / -1;
+      max-width: 250px;
+      justify-self: center;
+    }
+    .pc-card {
+      background-color: #1a1a2e;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.5s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+    body.day-mode .pc-card {
+      background-color: #e2e8f0;
+      color: #0c0c1b;
+    }
+    .pc-card:hover {
+      transform: translateY(-10px) rotateY(5deg) rotateX(5deg);
+      box-shadow: 0 15px 30px rgba(6, 182, 212, 0.3);
+    }
+    .pc-card.active {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80vw;
+      max-width: 900px;
+      min-width: 300px;
+      z-index: 1000;
+      transition: all 0.5s ease;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.8);
+      perspective: 1000px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .pc-card.active::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      z-index: -1;
+    }
+    .pc-image {
+      height: 12rem;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+      border-radius: 0.5rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.5s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .pc-card.active .pc-image {
+      height: 30vh;
+      max-height: 300px;
+    }
+    .btn {
+      background: linear-gradient(45deg, #06b6d4, #0891b2);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      font-weight: bold;
+      margin-top: 1rem;
+      box-shadow: 0 4px 10px rgba(6, 182, 212, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn:hover {
+      background: linear-gradient(45deg, #0891b2, #06b6d4);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(6, 182, 212, 0.4);
+    }
+    .btn:active {
+      transform: translateY(1px);
+    }
+    .partner-section, footer {
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+    .partner-section {
+      background-color: #121225;
+      margin: 2rem 0;
+      transition: all 0.5s ease;
+    }
+    body.day-mode .partner-section {
+      background-color: #e2e8f0;
+    }
+    footer {
+      background-color: #0a0a17;
+      border-top: 1px solid #222;
+      margin-top: 2rem;
+      transition: all 0.5s ease;
+    }
+    body.day-mode footer {
+      background-color: #e2e8f0;
+      border-top: 1px solid #cbd5e1;
+    }
+    .pc-card h2 {
+      font-size: 1.35rem;
+      margin-bottom: 0.75rem;
+      color: #f8fafc;
+    }
+    body.day-mode .pc-card h2 {
+      color: #0c0c1b;
+    }
+    .pc-card p {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      color: #cbd5e1;
+    }
+    body.day-mode .pc-card p {
+      color: #4b5563;
+    }
+    .pc-card .font-semibold {
+      font-size: 1.25rem;
+      color: #06b6d4;
+      font-weight: bold;
+    }
+    .close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: #ef4444;
+      color: white;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      z-index: 1001;
+      font-weight: bold;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .close-btn:hover {
+      background: #dc2626;
+      transform: rotate(90deg);
+    }
+    .pc-card.active .close-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .pc-image::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(120deg, rgba(255,255,255,0.1), rgba(255,255,255,0));
+      transform: skewX(-25deg);
+      transition: left 0.75s ease;
+    }
+    .pc-card:hover .pc-image::after {
+      left: 125%;
+    }
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none;
+    }
+    .partner-section h2 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: #f8fafc;
+      position: relative;
+      display: inline-block;
+    }
+    body.day-mode .partner-section h2 {
+      color: #0c0c1b;
+    }
+    .partner-section h2:after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, #06b6d4, #a78bfa);
+      border-radius: 3px;
+    }
+    footer h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #f8fafc;
+    }
+    body.day-mode footer h3 {
+      color: #0c0c1b;
+    }
+    footer p {
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      color: #cbd5e1;
+    }
+    body.day-mode footer p {
+      color: #4b5563;
+    }
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .pc-card.active {
+        width: 95vw;
+        max-width: 95vw;
+        max-height: 90vh;
+      }
+      .pc-card.active .pc-image {
+        height: 20vh;
+        max-height: 200px;
+      }
+      .grid {
+        grid-template-columns: 1fr;
+        padding: 1.5rem;
+      }
+      .hero {
+        padding: 3rem 1rem;
+        min-height: 50vh;
+      }
+      nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+      nav button {
+        margin-right: 0;
+        padding: 0.5rem;
+      }
+      
+      .pc-card:nth-last-child(1):nth-child(odd),
+      .pc-card:nth-last-child(2):nth-child(even) {
+        grid-column: auto;
+        max-width: 100%;
+        justify-self: stretch;
+      }
+    }
+    section {
+      scroll-margin-top: 70px;
+    }
+     .partner-section {
+      background-color: #121225;
+      margin: 2rem 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    
+    .partner-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 0 auto;
+      display: block;
+    }
+     * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0c0c1b;
+      color: white;
+      overflow-x: hidden;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #4b5563;
+      position: relative;
+      z-index: 100;
+      background-color: rgba(12, 12, 27, 0.9);
+      position: sticky;
+      top: 0;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+    }
+    nav a {
+      color: white; 
+      cursor: pointer;
+      margin-right: 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      text-decoration: none;
+    }
+    body.day-mode nav a {
+      color: #0c0c1b;
+    }
+    nav a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: #a78bfa; 
+      transition: width 0.3s ease;
+    }
+    nav a:hover {
+      color: #a78bfa; 
+    }
+    nav a:hover:after {
+      width: 100%;
+    }
+
+     .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      background: linear-gradient(45deg, #06b6d4, #a78bfa);
+      color: white;
+      border: none;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+    .theme-toggle:hover {
+      transform: scale(1.1);
+    }
+
+    /* 3D Chatbot Container */
+    .chatbot-container {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 1000;
+      perspective: 1000px;
+      transform-style: preserve-3d;
+    }
+  
+    .chatbot-toggle {
+      background: linear-gradient(45deg, #06b6d4, #a78bfa);
+      color: white;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      border: none;
+      transform-style: preserve-3d;
+      animation: float 6s ease-in-out infinite;
+    }
+  
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) rotateY(0deg);
+      }
+      50% {
+        transform: translateY(-10px) rotateY(5deg);
+      }
+    }
+  
+    .chatbot-toggle:hover {
+      transform: translateY(-5px) rotateY(10deg) scale(1.1);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+    }
+  
+    .chatbot-window {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      width: 350px;
+      height: 500px;
+      background-color: #1a1a2e;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      display: none;
+      transform: translateY(20px) rotateY(15deg);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      border: 1px solid #4b5563;
+      transform-style: preserve-3d;
+    }
+    body.day-mode .chatbot-window {
+      background-color: #e2e8f0;
+    }
+  
+    .chatbot-window.active {
+      display: block;
+      transform: translateY(0) rotateY(0deg);
+      opacity: 1;
+    }
+  
+    .chatbot-window::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(167, 139, 250, 0.1),
+        transparent
+      );
+      transition: 0.5s;
+    }
+  
+    .chatbot-window:hover::before {
+      left: 100%;
+    }
+  
+    .chatbot-header {
+      background: linear-gradient(90deg, #06b6d4, #a78bfa);
+      color: white;
+      padding: 15px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+  
+    .chatbot-body {
+      height: 380px;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: #121225;
+    }
+    body.day-mode .chatbot-body {
+      background-color: #f1f5f9;
+    }
+  
+    .chatbot-footer {
+      padding: 15px;
+      border-top: 1px solid #4b5563;
+      display: flex;
+      background-color: #1a1a2e;
+    }
+    body.day-mode .chatbot-footer {
+      background-color: #e2e8f0;
+      border-top: 1px solid #cbd5e1;
+    }
+  
+    .chatbot-input {
+      flex: 1;
+      padding: 12px 15px;
+      border-radius: 25px;
+      border: none;
+      background-color: #2d3748;
+      color: white;
+      outline: none;
+      font-family: inherit;
+      transition: all 0.3s ease;
+    }
+    body.day-mode .chatbot-input {
+      background-color: #e2e8f0;
+      color: #0c0c1b;
+    }
+  
+    .chatbot-input:focus {
+      box-shadow: 0 0 0 2px #a78bfa;
+    }
+  
+    .chatbot-send {
+      background: linear-gradient(45deg, #06b6d4, #0891b2);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      margin-left: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+  
+    .chatbot-send:hover {
+      transform: rotate(15deg) scale(1.1);
+    }
+  
+    .message {
+      margin-bottom: 15px;
+      max-width: 80%;
+      transition: all 0.3s ease;
+      transform-style: preserve-3d;
+    }
+  
+    .bot-message {
+      background-color: #2d3748;
+      padding: 12px 16px;
+      border-radius: 18px 18px 18px 4px;
+      color: white;
+      align-self: flex-start;
+      position: relative;
+      transform-origin: left center;
+      animation: messageIn 0.3s ease-out forwards;
+    }
+    body.day-mode .bot-message {
+      background-color: #cbd5e1;
+      color: #0c0c1b;
+    }
+  
+    .user-message {
+      background: linear-gradient(90deg, #06b6d4, #a78bfa);
+      padding: 12px 16px;
+      border-radius: 18px 18px 4px 18px;
+      color: white;
+      margin-left: auto;
+      transform-origin: right center;
+      animation: messageIn 0.3s ease-out forwards;
+    }
+  
+    @keyframes messageIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px) rotateY(30deg);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) rotateY(0deg);
+      }
+    }
+  
+    .typing-indicator {
+      display: flex;
+      padding: 10px 15px;
+      background-color: #2d3748;
+      border-radius: 18px;
+      width: fit-content;
+    }
+    body.day-mode .typing-indicator {
+      background-color: #cbd5e1;
+    }
+  
+    .typing-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #a78bfa;
+      border-radius: 50%;
+      margin: 0 3px;
+      animation: typingAnimation 1.4s infinite ease-in-out;
+    }
+  
+    .typing-dot:nth-child(1) {
+      animation-delay: 0s;
+    }
+  
+    .typing-dot:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+  
+    .typing-dot:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  
+    @keyframes typingAnimation {
+      0%, 60%, 100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-5px);
+      }
+    }
+  
+    /* Pulsing effect for the toggle button */
+    .pulse-effect {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: rgba(167, 139, 250, 0.4);
+      animation: pulse 2s infinite;
+      z-index: -1;
+    }
+  
+    @keyframes pulse {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.7;
+      }
+      70% {
+        transform: scale(1.3);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+    }
+    
+    /* Build Section Fix */
+    #build {
+      padding: 3rem 1rem;
+      text-align: center;
+      background-color: #0c0c1b;
+      transition: all 0.5s ease;
+    }
+    body.day-mode #build {
+      background-color: #f8fafc;
+      color: #0c0c1b;
+    }
+    #build h2 {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #f8fafc;
+    }
+    body.day-mode #build h2 {
+      color: #0c0c1b;
+    }
+    #build p {
+      margin-bottom: 1.5rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #cbd5e1;
+    }
+    body.day-mode #build p {
+      color: #4b5563;
+    }
+    .hero p {
+  color: white !important; /* Force white text in dark mode */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+body.day-mode .hero p {
+  color: #ffffff !important; /* Dark text in light mode */
+  text-shadow: none;
+}
+ header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: rgba(12, 12, 27, 0.9);
+      border-bottom: 1px solid #4b5563;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: all 0.5s ease;
+    }
+    
+    body.day-mode header {
+      background-color: rgba(248, 250, 252, 0.9);
+      border-bottom: 1px solid #cbd5e1;
+    }
+    
+    /* Logo Container with Image and Text */
+    .logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 80px; /* Increased height */
+    }
+    
+    .logo-image {
+      height: 50px; /* Image height */
+      width: auto;
+      margin-bottom: 5px; /* Space between image and text */
+      object-fit: cover; /* Ensures image covers the area */
+    }
+    
+    .logo-text {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #06b6d4;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    body.day-mode .logo-text {
+      color: #0c0c1b;
+    }
+    
+    /* Navigation */
+    .desktop-menu {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .desktop-menu a {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    body.day-mode .desktop-menu a {
+      color: #0c0c1b;
+    }
+    
+    .desktop-menu a:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -5px;
+      left: 0;
+      background-color: #a78bfa;
+      transition: width 0.3s ease;
+    }
+    
+    .desktop-menu a:hover {
+      color: #a78bfa;
+    }
+    
+    .desktop-menu a:hover:after {
+      width: 100%;
+    }
+    
+    /* Mobile Responsiveness */
+    @media (max-width: 768px) {
+      header {
+        padding: 1rem;
+        flex-direction: column;
+      }
+      
+      .logo-container {
+        height: auto;
+        margin-bottom: 1rem;
+      }
+      
+      .logo-image {
+        height: 40px;
+      }
+      
+      .logo-text {
+        font-size: 1.2rem;
+      }
+      
+      .desktop-menu {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+      }
+    }
+    .logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100px; /* Increased from 80px */
+}
+
+.logo-image {
+  height: 70px; /* Increased from 50px */
+  width: auto;
+  margin-bottom: 5px;
+  object-fit: cover;
+}
+
+.logo-text {
+  font-size: 1.8rem; /* Increased from 1.5rem */
+  font-weight: bold;
+  color: #06b6d4;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+@media (max-width: 768px) {
+  .logo-image {
+    height: 60px; /* Increased from 40px */
+  }
+  
+  .logo-text {
+    font-size: 1.5rem; /* Increased from 1.2rem */
+  }
+}
+  </style>
+</head>
+
+<body>
+  <div class="particles" id="particles-js"></div>
+  
+  <!-- Theme Toggle Button -->
+  <button class="theme-toggle" id="themeToggle">
+    <i data-lucide="moon" id="themeIcon"></i>
+  </button>
+  
+   <header>
+    <!-- Logo with image and text below -->
+     <a href="bestro.html" style="text-decoration: none; color: inherit;">
+    <div class="logo-container">
+      <img src="Landscape.png" alt="Beastro Logo" class="logo-image">
+      <div class="logo-text"></div>
+    </div>
+  </a>
+    
+    <!-- Navigation menu -->
+    <nav class="desktop-menu">
+  <a href="bestro.html">Home</a> 
+  <a href="pcs.html">PCs</a> 
+  <a href="componentBeast.html">Components</a> 
+  <a href="build.html">Build Your PC</a> 
+  <a href="beastrocontact.html">Contact</a> 
+</nav>
+  </header>
+
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <h1>Custom Built Gaming Rigs</h1>
+      <p class="" style="margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+        High-performance gaming PC.s built with premium components for the ultimate gaming experience
+      </p>
+      <button onclick="alert('Exploring our builds!'); scrollToSection('pcs')">Explore Builds</button>
+    </div>
+  </section>
+
+  <section class="grid" id="pcs">
+   
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/011-vision-1024x1024.png')"></div>
+      <h2>Odin 1.0 – Ryzen 9 9900X & RTX 5070 Ti 16GB</h2>
+      <p class='text-gray-400'>AMD Ryzen 9 9900X, RTX 5070 Ti 16GB, 32GB DDR5 RAM, 2TB NVMe SSD</p>
+      <p class='font-semibold'>$2,499</p>
+      <button onclick='alert("Added Odin 1.0 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+   
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2024/01/Hyte-70-white-1024x1024.png')"></div>
+      <h2>Extreme 1.1 – Core Ultra 9 285k & RTX 5090 32GB</h2>
+      <p class='text-gray-400'>Intel Core Ultra 9 285K, RTX 5090 32GB, 64GB DDR5 RAM, 4TB NVMe SSD</p>
+      <p class='font-semibold'>$4,299</p>
+      <button onclick='alert("Added Extreme 1.1 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/502-1024x1024.png')"></div>
+      <h2>Odin 1.1 – Core i9 14900K & RTX 5080 16GB</h2>
+      <p class='text-gray-400'>Intel i9 14900K, RTX 5080 16GB, 32GB DDR5 RAM, 2TB NVMe SSD</p>
+      <p class='font-semibold'>$3,199</p>
+      <button onclick='alert("Added Odin 1.1 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/1.png')"></div>
+      <h2>Karachi King 1- Core i5 & RTX 4060</h2>
+      <p class='text-gray-400'>Intel i5 13400F, RTX 4060 8GB, 16GB DDR4 RAM, 1TB NVMe SSD</p>
+      <p class='font-semibold'>$1,199</p>
+      <button onclick='alert("Added Karachi King 1 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/1-3.png')"></div>
+      <h2>Karachi King 2 – Ryzen 5 7600x RX 7700 XT 12 GB 16  GB</h2>
+      <p class='text-gray-400'>AMD Ryzen 5 7600X, RX 7700 XT 12GB, 16GB DDR5 RAM, 1TB NVMe SSD DDR5 RAM, 4TB NVMe</p>
+      <p class='font-semibold'>$1,399</p>
+      <button onclick='alert("Added Karachi King 2 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/Untitled-1-2.png')"></div>
+      <h2>Hela 1.3 – i5 14400f Gen & RX 6600 XT 8GB 12GB 1TB SSD </h2>
+      <p class='text-gray-400'>AMD Ryzen 5 7600X, RX 7700 XT 12GB, 16GB DDR5 RAM, 1TB NVMe SSD DDR5 RAM, 4TB NVMe</p>
+      <p class='font-semibold'>$999</p>
+      <button onclick='alert("Added Hela 1.3 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2023/03/hyte-y70-touch-black-2.png')"></div>
+      <h2>Extreme 1.0 – Ryzen 7 9800X3D & RTX 5090 32GB</h2>
+      <p class='text-gray-400'>AMD Ryzen 7 9800X3D, RTX 5090 32GB, 64GB DDR5 RAM, 4TB NVMe SSD</p>
+      <p class='font-semibold'>$3,899</p>
+      <button onclick='alert("Added Extreme 1.0 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/dazzler-1024x1024.png')"></div>
+      <h2>Thor 1.0 – Ryzen 5 9600X & RX 9070 16GB 2TB NVMe</h2>
+      <p class='text-gray-400'>AMD Ryzen 5 9600X, RTX 9070 16GB, 32GB DDR5 RAM, 2TB NVMe SSD 1TB HDD</p>
+      <p class='font-semibold'>$2,199</p>
+      <button onclick='alert("Added Thor 1.0 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/lian-build-1024x1024.png')"></div>
+      <h2>Odin 1.2 – Ryzen 9 9950x & RTX 5080 16GB</h2>
+      <p class='text-gray-400'>AMD Ryzen 9 9950X, RTX 5080 16GB, 64GB DDR5 RAM, 4TB NVMe SSD</p>
+      <p class='font-semibold'>$3,599</p>
+      <button onclick='alert("Added Odin 1.2 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/asus-tuf-501-min-1-961x1024.png')"></div>
+      <h2>Thor 1.3 – Ryzen 9 9900X & RX 9070 XT 16GB</h2>
+      <p class='text-gray-400'>AMD Ryzen 9 9900X, RX 9070 XT 16GB, 32GB DDR5 RAM, 2TB NVMe SSD</p>
+      <p class='font-semibold'>$2,799</p>
+      <button onclick='alert("Added Thor 1.3 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2022/11/011-vision-1024x1024.png')"></div>
+      <h2>Fenrir 1.0 – Ryzen 7 9700X & RTX 5060 12GB</h2>
+      <p class='text-gray-400'>AMD Ryzen 7 9700X, RTX 5060 12GB, 16GB DDR5 RAM, 1TB NVMe SSD</p>
+      <p class='font-semibold'>$1,799</p>
+      <button onclick='alert("Added Fenrir 1.0 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+
+    
+    <div class='pc-card' onclick='toggleCard(this)'>
+      <div class='pc-image' style="background-image: url('https://zestrogaming.com/wp-content/uploads/2024/01/Hyte-70-white-1024x1024.png')"></div>
+      <h2>Loki 1.0 – Core i7 14700K & RTX 5070 16GB</h2>
+      <p class='text-gray-400'>Intel i7 14700K, RTX 5070 16GB, 32GB DDR5 RAM, 2TB NVMe SSD</p>
+      <p class='font-semibold'>$2,899</p>
+      <button onclick='alert("Added Loki 1.0 to cart!"); event.stopPropagation();' class='btn'>Buy Now</button>
+      <button class='close-btn' onclick='closeCard(event, this.parentElement)'>✕</button>
+    </div>
+  </section>
+
+  <section class="partner-section" id="components">
+    <h2>Our Trusted Partners</h2>
+    <img src="https://zestrogaming.com/wp-content/uploads/2023/04/partners-1024x323-1.webp" alt="Partners" style="max-width: 100%; height: auto; border-radius: 8px;">
+  </section>
+
+  <section id="build">
+    <h2>Build Your Custom PC</h2>
+    <p style="margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto;">
+      Configure your dream gaming PC with our custom builder tool
+    </p>
+    <button onclick="alert('Redirecting to PC builder!')" class="btn">Start Building</button>
+  </section>
+
+  <footer id="contact">
+    <h3>Top Gaming Builds</h3>
+    <p style="margin-bottom: 1.5rem;">Beastro offers only the finest pre-configured and custom builds for serious gamers.</p>
+    <div style="margin-top: 2rem;">
+      <p>© 2023 Beastro Gaming PCs. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Chatbot HTML -->
+  <div class="chatbot-container">
+    <div class="pulse-effect"></div>
+    <button class="chatbot-toggle" onclick="toggleChatbot()">
+      <i data-lucide="message-circle"></i>
+    </button>
+    <div class="chatbot-window" id="chatbotWindow">
+      <div class="chatbot-header">
+        <i data-lucide="bot" style="margin-right: 10px;"></i>
+        Beastro PC Assistant
+      </div>
+      <div class="chatbot-body" id="chatbotBody">
+        <div class="message bot-message">
+          <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <i data-lucide="cpu" style="margin-right: 8px;"></i>
+            <strong>Welcome to Beastro!</strong>
+          </div>
+          I'm here to help you build your dream gaming PC. Ask me about:
+        </div>
+        <div class="message bot-message">
+          <ul style="margin-top: 5px; padding-left: 20px;">
+            <li>Component recommendations</li>
+            <li>Build compatibility</li>
+            <li>Performance expectations</li>
+            <li>Budget optimization</li>
+          </ul>
+        </div>
+      </div>
+      <div class="chatbot-footer">
+        <input type="text" class="chatbot-input" id="chatbotInput" placeholder="Ask me about gaming PCs..." onkeypress="handleChatInput(event)">
+        <button class="chatbot-send" onclick="sendChatMessage()">
+          <i data-lucide="send"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script>
+    function scrollToSection(sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    function toggleCard(card) {
+      if (card.classList.contains('active')) {
+        card.classList.remove('active');
+        return;
+      }
+      
+      document.querySelectorAll('.pc-card.active').forEach(activeCard => {
+        activeCard.classList.remove('active');
+      });
+      
+      card.classList.add('active');
+    }
+
+    function closeCard(event, card) {
+      event.stopPropagation();
+      card.classList.remove('active');
+    }
+
+    document.addEventListener('click', function(event) {
+      if (!event.target.closest('.pc-card.active') && !event.target.closest('.btn')) {
+        document.querySelectorAll('.pc-card.active').forEach(card => {
+          card.classList.remove('active');
+        });
+      }
+    });
+
+    // Theme Toggle Functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    const body = document.body;
+    
+    // Check for saved theme preference
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme === 'day') {
+      body.classList.add('day-mode');
+      themeIcon.setAttribute('data-lucide', 'sun');
+    } else {
+      themeIcon.setAttribute('data-lucide', 'moon');
+    }
+    
+    // Initialize icons
+    lucide.createIcons();
+    
+    // Toggle theme
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('day-mode');
+      
+      if (body.classList.contains('day-mode')) {
+        localStorage.setItem('theme', 'day');
+        themeIcon.setAttribute('data-lucide', 'sun');
+      } else {
+        localStorage.setItem('theme', 'night');
+        themeIcon.setAttribute('data-lucide', 'moon');
+      }
+      
+      // Refresh icons
+      lucide.createIcons();
+      
+      // Update particles color based on theme
+      updateParticles();
+    });
+    
+    // Initialize particles
+    function initParticles() {
+      particlesJS('particles-js', {
+        particles: {
+          number: {
+            value: 80,
+            density: {
+              enable: true,
+              value_area: 800
+            }
+          },
+          color: {
+            value: body.classList.contains('day-mode') ? "#06b6d4" : "#a78bfa"
+          },
+          shape: {
+            type: "circle",
+            stroke: {
+              width: 0,
+              color: "#000000"
+            },
+            polygon: {
+              nb_sides: 5
+            }
+          },
+          opacity: {
+            value: 0.3,
+            random: false,
+            anim: {
+              enable: false,
+              speed: 1,
+              opacity_min: 0.1,
+              sync: false
+            }
+          },
+          size: {
+            value: 3,
+            random: true,
+            anim: {
+              enable: false,
+              speed: 40,
+              size_min: 0.1,
+              sync: false
+            }
+          },
+          line_linked: {
+            enable: true,
+            distance: 150,
+            color: body.classList.contains('day-mode') ? "#06b6d4" : "#a78bfa",
+            opacity: 0.2,
+            width: 1
+          },
+          move: {
+            enable: true,
+            speed: 2,
+            direction: "none",
+            random: false,
+            straight: false,
+            out_mode: "out",
+            bounce: false,
+            attract: {
+              enable: false,
+              rotateX: 600,
+              rotateY: 1200
+            }
+          }
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: {
+              enable: true,
+              mode: "grab"
+            },
+            onclick: {
+              enable: true,
+              mode: "push"
+            },
+            resize: true
+          },
+          modes: {
+            grab: {
+              distance: 140,
+              line_linked: {
+                opacity: 1
+              }
+            },
+            bubble: {
+              distance: 400,
+              size: 40,
+              duration: 2,
+              opacity: 8,
+              speed: 3
+            },
+            repulse: {
+              distance: 200,
+              duration: 0.4
+            },
+            push: {
+              particles_nb: 4
+            },
+            remove: {
+              particles_nb: 2
+            }
+          }
+        },
+        retina_detect: true
+      });
+    }
+    
+    // Update particles color based on theme
+    function updateParticles() {
+      if (window.pJSDom && window.pJSDom.length > 0) {
+        const color = body.classList.contains('day-mode') ? "#06b6d4" : "#a78bfa";
+        pJSDom[0].pJS.particles.color.value = color;
+        pJSDom[0].pJS.particles.line_linked.color = color;
+        pJSDom[0].pJS.fn.particlesRefresh();
+      }
+    }
+    
+    // Initialize particles on load
+    document.addEventListener('DOMContentLoaded', function() {
+      initParticles();
+    });
+
+    // Chatbot Functions and new interactive flow
+    let conversationState = 0;
+    let userData = {
+      budget: null,
+      currency: null,
+      usage: null,
+      brandPreference: null
+    };
+
+    function toggleChatbot() {
+      const chatbot = document.getElementById('chatbotWindow');
+      chatbot.classList.toggle('active');
+      if (chatbot.classList.contains('active')) {
+        lucide.createIcons();
+      }
+    }
+
+    function handleChatInput(e) {
+      if (e.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatbotInput');
+      const message = input.value.trim();
+      const chatBody = document.getElementById('chatbotBody');
+
+      if (!message) return;
+
+      // Add user message
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user-message';
+      userMsg.innerHTML = `<i data-lucide="user" style="margin-right: 5px;"></i>${escapeHtml(message)}`;
+      chatBody.appendChild(userMsg);
+      input.value = '';
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      // Process bot response after delay
+      setTimeout(() => {
+        processUserMessage(message);
+      }, 1000);
+    }
+
+    function processUserMessage(message) {
+      const chatBody = document.getElementById('chatbotBody');
+
+      // Remove welcome message on first user input
+      const welcomeMsg = document.getElementById('welcomeMessage');
+      if (welcomeMsg) {
+        welcomeMsg.remove();
+      }
+
+      let botReply = '';
+
+      switch (conversationState) {
+        case 0:
+          // Parse budget and currency
+          const budgetMatch = message.match(/(\d+\.?\d*)/);
+          const currencyMatch = message.match(/(inr|usd|\$|rs|rupees)/i);
+          if (budgetMatch) {
+            userData.budget = parseFloat(budgetMatch[1]);
+            userData.currency = currencyMatch ? (currencyMatch[0].toLowerCase().includes('inr') || currencyMatch[0].toLowerCase().includes('rs') || currencyMatch[0].toLowerCase().includes('rupees') ? 'INR' : 'USD') : 'USD';
+            botReply = `Great! Your budget is ${userData.budget} ${userData.currency}. What will you primarily use the PC for? (Gaming, Video Editing, Office Work, Programming, etc.)`;
+            conversationState = 1;
+          } else {
+            botReply = "Sorry, I didn't catch your budget. Please enter your budget amount (e.g., 50000 INR or $700).";
+          }
+          break;
+
+        case 1:
+          // Capture usage
+          userData.usage = message.trim();
+          botReply = `Got it! You want the PC for ${userData.usage}. Do you have any brand preference? (Intel/AMD for CPU, NVIDIA/AMD for GPU) If no preference, just say 'No'.`;
+          conversationState = 2;
+          break;
+
+        case 2:
+          // Capture brand preference
+          const pref = message.toLowerCase();
+          if (pref.includes('intel')) {
+            userData.brandPreference = 'Intel';
+          } else if (pref.includes('amd')) {
+            userData.brandPreference = 'AMD';
+          } else if (pref.includes('nvidia')) {
+            userData.brandPreference = 'NVIDIA';
+          } else if (pref.includes('no')) {
+            userData.brandPreference = 'No preference';
+          } else {
+            userData.brandPreference = 'No preference';
+          }
+          botReply = generateRecommendation(userData);
+          conversationState = 3;
+          break;
+
+        case 3:
+          botReply = "If you want to build another PC or have more questions, just type your query or say 'restart' to start over.";
+          if (message.toLowerCase().includes('restart')) {
+            resetConversation();
+            botReply = "Let's start again! What's your budget? (INR or USD)";
+          }
+          break;
+
+        default:
+          botReply = "I'm here to help you build your PC. Please tell me your budget to get started.";
+          conversationState = 0;
+          break;
+      }
+
+      const botMsg = document.createElement('div');
+      botMsg.className = 'message bot-message';
+      botMsg.innerHTML = botReply;
+      chatBody.appendChild(botMsg);
+      lucide.createIcons();
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    function generateRecommendation(data) {
+      const budget = data.budget;
+      const currency = data.currency;
+      const usage = data.usage.toLowerCase();
+      const brand = data.brandPreference;
+
+      // Define component recommendations based on budget and usage
+      // Prices are approximate and in the user's currency
+      let components = {};
+      let totalCost = 0;
+      let upgradeNote = '';
+
+      // Helper function to format price
+      function formatPrice(amount) {
+        return currency === 'INR' ? `₹${amount.toLocaleString()}` : `$${amount.toLocaleString()}`;
+      }
+
+      // Budget thresholds (in user's currency)
+      // For simplicity, assume 1 USD = 80 INR approx for internal logic if needed
+      const budgetInUSD = currency === 'INR' ? budget / 80 : budget;
+
+      if (budgetInUSD < 500) {
+        // Low budget build
+        components = {
+          CPU: brand === 'Intel' ? 'Intel Core i3-12100F' : 'AMD Ryzen 3 4100',
+          GPU: 'Integrated Graphics or NVIDIA GTX 1050 Ti',
+          Motherboard: brand === 'Intel' ? 'B660 chipset motherboard' : 'B450 chipset motherboard',
+          RAM: '8GB DDR4',
+          Storage: '256GB SSD',
+          PSU: '450W 80+ Bronze',
+          Case: 'Budget ATX Mid Tower',
+          Monitor: 'Optional 1080p Monitor'
+        };
+        totalCost = currency === 'INR' ? 25000 : 300;
+        upgradeNote = "Your budget is on the lower side. Consider upgrading RAM and GPU in the future for better performance.";
+      } else if (budgetInUSD < 1000) {
+        // Mid budget build
+        components = {
+          CPU: brand === 'Intel' ? 'Intel Core i5-12400F' : 'AMD Ryzen 5 5600X',
+          GPU: brand === 'NVIDIA' ? 'NVIDIA RTX 3050' : 'AMD RX 6600',
+          Motherboard: brand === 'Intel' ? 'B660 chipset motherboard' : 'B550 chipset motherboard',
+          RAM: '16GB DDR4',
+          Storage: '512GB NVMe SSD',
+          PSU: '550W 80+ Bronze',
+          Case: 'Mid ATX Mid Tower',
+          Monitor: '1080p 75Hz Monitor'
+        };
+        totalCost = currency === 'INR' ? 60000 : 700;
+        upgradeNote = "Good budget! You can upgrade to 32GB RAM or add more storage later.";
+      } else {
+        // High budget build
+        components = {
+          CPU: brand === 'Intel' ? 'Intel Core i7-13700K' : 'AMD Ryzen 7 7800X3D',
+          GPU: brand === 'NVIDIA' ? 'NVIDIA RTX 4070 Ti' : 'AMD RX 7900 XT',
+          Motherboard: brand === 'Intel' ? 'Z790 chipset motherboard' : 'X670 chipset motherboard',
+          RAM: '32GB DDR5',
+          Storage: '1TB NVMe SSD + 2TB HDD',
+          PSU: '750W 80+ Gold',
+          Case: 'Premium ATX Mid Tower',
+          Monitor: '1440p 144Hz Monitor'
+        };
+        totalCost = currency === 'INR' ? 150000 : 1800;
+        upgradeNote = "Excellent budget! This build is future-proof with high-end components.";
+      }
+
+      // Compose recommendation message
+      let message = `<div style="font-weight:bold; margin-bottom: 8px;">Here's your recommended PC build for a budget of ${formatPrice(totalCost)} (${currency}):</div>`;
+      message += '<ul style="text-align:left; padding-left: 20px;">';
+      for (const [comp, val] of Object.entries(components)) {
+        message += `<li><strong>${comp}:</strong> ${val}</li>`;
+      }
+      message += '</ul>';
+      message += `<div style="margin-top: 10px; font-style: italic; color: #a78bfa;">${upgradeNote}</div>`;
+      message += `<div style="margin-top: 15px; font-weight: bold;">Summary:</div>`;
+      message += `<div style="text-align:left; padding-left: 20px;">`;
+      message += `<p>Purpose: ${usage.charAt(0).toUpperCase() + usage.slice(1)}</p>`;
+      message += `<p>Total Estimated Cost: ${formatPrice(totalCost)}</p>`;
+      message += `</div>`;
+
+      return message;
+    }
+
+    function resetConversation() {
+      conversationState = 0;
+      userData = {
+        budget: null,
+        currency: null,
+        usage: null,
+        brandPreference: null
+      };
+      const chatBody = document.getElementById('chatbotBody');
+      chatBody.innerHTML = `
+        <div class="message bot-message" id="welcomeMessage">
+          <div style="display: flex; align-items: center; margin-bottom: 5px;">
+            <i data-lucide="cpu" style="margin-right: 8px;"></i>
+            <strong>Welcome to Beastro!</strong>
+          </div>
+          Hi! I'm your friendly PC build assistant. Let's find the best PC for your budget and needs. What's your budget? (INR or USD)
+        </div>
+      `;
+      lucide.createIcons();
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Escape HTML to prevent injection
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '<',
+        '>': '>',
+        '"': '"',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    lucide.createIcons();
+  </script>
+</body>
+</html>
